@@ -63,6 +63,7 @@ envoy_cc_library(
     hdrs = ["codec_impl.h"],
     deps = [
         ":codec_interface",
+        ":transport_lib",
         "//source/common/common:assert_lib",
         "//source/common/common:minimal_logger_lib",
         "//source/common/common:utility_lib",

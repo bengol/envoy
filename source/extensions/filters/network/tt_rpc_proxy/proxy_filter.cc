@@ -24,12 +24,12 @@ void ProxyFilter::initializeReadFilterCallbacks(Network::ReadFilterCallbacks& ca
 }
 
 Network::FilterStatus ProxyFilter::onData(Buffer::Instance& data, bool end_stream) {
-  ENVOY_CONN_LOG(trace, "echo: got {} bytes, end_stream: {}", read_callbacks_->connection(), data.length(), end_stream);
-
+  ENVOY_CONN_LOG(trace, "ProxyFilter: got {} bytes, end_stream: {}", read_callbacks_->connection(), data.length(), end_stream);
   try {
     decoder_->decode(data);
+    ENVOY_CONN_LOG(trace, "ProxyFilter: {} bytes after transport", read_callbacks_->connection(), data.length());
     return Network::FilterStatus::Continue;
-  } catch (ProtocolError&) {
+  } catch (EnvoyException&) {
     ENVOY_CONN_LOG(trace, "decode error", read_callbacks_->connection());
     return Network::FilterStatus::StopIteration;
   }

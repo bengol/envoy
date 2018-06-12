@@ -8,11 +8,18 @@
 #include "common/common/logger.h"
 
 #include "extensions/filters/network/tt_rpc_proxy/codec.h"
+#include "extensions/filters/network/tt_rpc_proxy/transport.h"
 
 namespace Envoy {
 namespace Extensions {
 namespace NetworkFilters {
 namespace TTRPCProxy {
+
+class TransportDecoderCallback : public  TransportCallbacks, Logger::Loggable<Logger::Id::thrift_rpc> {
+public:
+    void transportFrameStart(absl::optional<uint32_t> size) override;
+    void transportFrameComplete() override;
+};
 
 class DecoderImpl : public Decoder, Logger::Loggable<Logger::Id::thrift_rpc> {
 public:
