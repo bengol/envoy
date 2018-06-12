@@ -1,4 +1,5 @@
 #include "extensions/filters/network/tt_rpc_proxy/proxy_filter.h"
+#include "extensions/filters/network/tt_rpc_proxy/transport.h"
 
 #include "envoy/buffer/buffer.h"
 #include "envoy/network/connection.h"
@@ -10,19 +11,32 @@ namespace Extensions {
 namespace NetworkFilters {
 namespace TTRPCProxy {
 
-ProxyFilter::ProxyFilter() {
-
+ProxyFilter::ProxyFilter(DecoderFactory& factory)
+  : decoder_(factory.create(*this)) {
 }
 
 ProxyFilter::~ProxyFilter() {
 
 }
 
+void ProxyFilter::initializeReadFilterCallbacks(Network::ReadFilterCallbacks& callbacks) {
+  read_callbacks_ = &callbacks;
+}
+
 Network::FilterStatus ProxyFilter::onData(Buffer::Instance& data, bool end_stream) {
-  ENVOY_CONN_LOG(trace, "echo: got {} bytes", read_callbacks_->connection(), data.length());
-  read_callbacks_->connection().write(data, end_stream);
-  ASSERT(0 == data.length());
-  return Network::FilterStatus::StopIteration;
+  ENVOY_CONN_LOG(trace, "echo: got {} bytes, end_stream: {}", read_callbacks_->connection(), data.length(), end_stream);
+
+  try {
+    decoder_->decode(data);
+    return Network::FilterStatus::Continue;
+  } catch (ProtocolError&) {
+    ENVOY_CONN_LOG(trace, "decode error", read_callbacks_->connection());
+    return Network::FilterStatus::StopIteration;
+  }
+}
+
+void ProxyFilter::onRespValue(RespValuePtr&& value) {
+  assert(&value);
 }
 
 } // namespace Echo

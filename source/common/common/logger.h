@@ -38,6 +38,7 @@ namespace Logger {
   FUNCTION(mongo)                \
   FUNCTION(pool)                 \
   FUNCTION(redis)                \
+  FUNCTION(thrift_rpc)           \
   FUNCTION(router)               \
   FUNCTION(runtime)              \
   FUNCTION(testing)              \

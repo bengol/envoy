@@ -8,6 +8,7 @@
 #include "common/config/filter_json.h"
 
 #include "extensions/filters/network/tt_rpc_proxy/proxy_filter.h"
+#include "extensions/filters/network/tt_rpc_proxy/codec_impl.h"
 
 namespace Envoy {
 namespace Extensions {
@@ -19,9 +20,11 @@ Network::FilterFactoryCb TTRPCProxyFilterConfigFactory::createFilterFactoryFromP
     Server::Configuration::FactoryContext& context) {
   assert(&proto_config);
   assert(&context);
+  
   return [](Network::FilterManager& filter_manager) -> void {
+    DecoderFactoryImpl factory;
     filter_manager.addReadFilter(
-        std::make_shared<ProxyFilter>());
+        std::make_shared<ProxyFilter>(factory));
   };
 }
 
