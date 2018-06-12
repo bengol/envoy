@@ -167,6 +167,8 @@ private:
   std::string name_;
 };
 
+typedef std::unique_ptr<AutoTransportImpl> AutoTransportImplPtr;
+
 } // namespace TTRPCProxy
 } // namespace NetworkFilters
 } // namespace Extensions

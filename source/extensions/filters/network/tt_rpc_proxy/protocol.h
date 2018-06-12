@@ -439,6 +439,8 @@ private:
   std::string name_;
 };
 
+typedef std::unique_ptr<AutoProtocolImpl> AutoProtocolImplPtr;
+
 } // namespace TTRPCProxy
 } // namespace NetworkFilters
 } // namespace Extensions
