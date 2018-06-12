@@ -54,8 +54,8 @@ void DecoderImpl::decode(Buffer::Instance& data) {
     try {
         // Transport decode
         bool success = transport_decoder->decodeFrameStart(data);
-        ENVOY_LOG(trace, " decode thrift transport: {}", success);
         if (success) {
+            ENVOY_LOG(trace, " decode thrift transport: {}, transport:{}", success, transport_decoder->name());
             transport_decoder->decodeFrameEnd(data);
         }
 
@@ -66,7 +66,33 @@ void DecoderImpl::decode(Buffer::Instance& data) {
         success = protocol_decoder->readMessageBegin(data, name, msg_type, seq_id);
         ENVOY_LOG(trace, " decode thrift protocol: {}", success);
         if (success) {
-            ENVOY_LOG(trace, "name:{} msg_type:{} seq_id:{}", name, static_cast<int8_t>(msg_type), seq_id);
+            ENVOY_LOG(trace, "protocol:{} name:{} msg_type:{} seq_id:{}", protocol_decoder->name(),
+                name, static_cast<int8_t>(msg_type), seq_id);
+
+            // read struct
+            std::string struct_name;
+            protocol_decoder->readStructBegin(data, struct_name);
+
+            // read field
+            std::string field_name;
+            FieldType field_type;
+            int16_t field_id;
+
+            // STRUCT
+            success = protocol_decoder->readFieldBegin(data, field_name, field_type, field_id);
+            if (success) {
+                ENVOY_LOG(trace, "filed:{} type:{} id:{}", field_name, static_cast<int8_t>(field_type), field_id);
+            }
+
+            // field 1
+            success = protocol_decoder->readFieldBegin(data, field_name, field_type, field_id);
+            if (success) {
+                ENVOY_LOG(trace, "filed:{} type:{} id:{}", field_name, static_cast<int8_t>(field_type), field_id);
+            }
+            std::string string_val;
+            protocol_decoder->readString(data, string_val);
+            protocol_decoder->readFieldEnd(data);
+            ENVOY_LOG(trace, "string_val:{}", string_val);
         }
         protocol_decoder->readMessageEnd(data);
     } catch (EnvoyException& e) {
