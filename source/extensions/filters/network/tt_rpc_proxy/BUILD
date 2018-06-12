@@ -50,3 +50,32 @@ envoy_cc_library(
         "//source/common/singleton:const_singleton",
     ],
 )
+
+envoy_cc_library(
+    name = "config",
+    srcs = ["config.cc"],
+    hdrs = ["config.h"],
+    deps = [
+        "//include/envoy/registry",
+        "//source/common/config:filter_json_lib",
+        "//source/common/tcp_proxy",
+        "//source/extensions/filters/network:well_known_names",
+        "//source/extensions/filters/network/common:factory_base_lib",
+        "//source/extensions/filters/network/tt_rpc_proxy:proxy_filter_lib",
+    ],
+)
+
+envoy_cc_library(
+    name = "proxy_filter_lib",
+    srcs = ["proxy_filter.cc"],
+    hdrs = ["proxy_filter.h"],
+    deps = [
+        "//include/envoy/network:drain_decision_interface",
+        "//include/envoy/network:filter_interface",
+        "//include/envoy/upstream:cluster_manager_interface",
+        "//source/common/buffer:buffer_lib",
+        "//source/common/common:assert_lib",
+        "//source/common/config:utility_lib",
+        "@envoy_api//envoy/config/filter/network/tcp_proxy/v2:tcp_proxy_cc",
+    ],
+)

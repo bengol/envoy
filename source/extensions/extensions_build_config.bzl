@@ -68,6 +68,7 @@ EXTENSIONS = {
     "envoy.filters.network.tcp_proxy":                  "//source/extensions/filters/network/tcp_proxy:config",
     # TODO(zuercher): switch to config target once a filter exists
     "envoy.filters.network.thrift_proxy":               "//source/extensions/filters/network/thrift_proxy:transport_lib",
+    "envoy.filters.network.tt_rpc_proxy":               "//source/extensions/filters/network/tt_rpc_proxy:config",
 
     #
     # Stat sinks

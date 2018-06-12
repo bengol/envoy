@@ -28,6 +28,8 @@ public:
   const std::string TCP_PROXY = "envoy.tcp_proxy";
   // Authorization filter
   const std::string EXT_AUTHORIZATION = "envoy.ext_authz";
+  // Toutiao Thrift RPC filter
+  const std::string TT_RCP_PROXY = "tt.rpc_proxy";
 
   // Converts names from v1 to v2
   const Config::V1Converter v1_converter_;
